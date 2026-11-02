@@ -1,0 +1,65 @@
+Create a Text parameter named pWorkbookPath containing the full local path to the workbook. Then create one blank query per table and paste the matching expression below into Advanced Editor. These queries promote headers and assign expected types. Add Trim/Clean using the function template if needed.
+
+===== QUERY: Departments =====
+let
+    Source = Excel.Workbook(File.Contents(pWorkbookPath), null, true),
+    T = Source{[Item="Departments",Kind="Sheet"]}[Data],
+    H = Table.PromoteHeaders(T,[PromoteAllScalars=true]),
+    C = Table.TransformColumnTypes(H,{{"Department_ID", type text},{"Department_Name", type text},{"Department_Type", type text},{"Bed_Capacity", Int64.Type}})
+in C
+
+===== QUERY: Doctors =====
+let
+    Source = Excel.Workbook(File.Contents(pWorkbookPath), null, true),
+    T = Source{[Item="Doctors",Kind="Sheet"]}[Data],
+    H = Table.PromoteHeaders(T,[PromoteAllScalars=true]),
+    C = Table.TransformColumnTypes(H,{{"Doctor_ID", type text},{"Doctor_Name", type text},{"Department_ID", type text},{"Specialty", type text},{"Experience_Years", Int64.Type},{"Consultation_Fee", Currency.Type}})
+in C
+
+===== QUERY: Patients =====
+let
+    Source = Excel.Workbook(File.Contents(pWorkbookPath), null, true),
+    T = Source{[Item="Patients",Kind="Sheet"]}[Data],
+    H = Table.PromoteHeaders(T,[PromoteAllScalars=true]),
+    C = Table.TransformColumnTypes(H,{{"Patient_ID", type text},{"Patient_Name", type text},{"Age", Int64.Type},{"Gender", type text},{"City", type text},{"Patient_Category", type text},{"Registration_Date", type date}})
+in C
+
+===== QUERY: Appointments =====
+let
+    Source = Excel.Workbook(File.Contents(pWorkbookPath), null, true),
+    T = Source{[Item="Appointments",Kind="Sheet"]}[Data],
+    H = Table.PromoteHeaders(T,[PromoteAllScalars=true]),
+    C = Table.TransformColumnTypes(H,{{"Appointment_ID", type text},{"Patient_ID", type text},{"Doctor_ID", type text},{"Department_ID", type text},{"Appointment_Date", type date},{"Appointment_Time", type time},{"Waiting_Time_Minutes", Int64.Type},{"Appointment_Status", type text},{"Consultation_Charge", Currency.Type},{"Booking_Channel", type text}})
+in C
+
+===== QUERY: Admissions =====
+let
+    Source = Excel.Workbook(File.Contents(pWorkbookPath), null, true),
+    T = Source{[Item="Admissions",Kind="Sheet"]}[Data],
+    H = Table.PromoteHeaders(T,[PromoteAllScalars=true]),
+    C = Table.TransformColumnTypes(H,{{"Admission_ID", type text},{"Patient_ID", type text},{"Doctor_ID", type text},{"Department_ID", type text},{"Admission_Date", type date},{"Discharge_Date", type date},{"Length_of_Stay_Days", Int64.Type},{"Admission_Status", type text},{"Ward_Type", type text},{"Admission_Type", type text}})
+in C
+
+===== QUERY: Billing =====
+let
+    Source = Excel.Workbook(File.Contents(pWorkbookPath), null, true),
+    T = Source{[Item="Billing",Kind="Sheet"]}[Data],
+    H = Table.PromoteHeaders(T,[PromoteAllScalars=true]),
+    C = Table.TransformColumnTypes(H,{{"Bill_ID", type text},{"Patient_ID", type text},{"Department_ID", type text},{"Bill_Date", type date},{"Service_Category", type text},{"Total_Amount", Currency.Type},{"Amount_Paid", Currency.Type},{"Outstanding_Amount", Currency.Type},{"Payment_Method", type text},{"Payment_Status", type text}})
+in C
+
+===== QUERY: Bed_Inventory =====
+let
+    Source = Excel.Workbook(File.Contents(pWorkbookPath), null, true),
+    T = Source{[Item="Bed_Inventory",Kind="Sheet"]}[Data],
+    H = Table.PromoteHeaders(T,[PromoteAllScalars=true]),
+    C = Table.TransformColumnTypes(H,{{"Bed_ID", type text},{"Department_ID", type text},{"Bed_Status", type text},{"Bed_Type", type text}})
+in C
+
+===== QUERY: Read_Me =====
+let
+    Source = Excel.Workbook(File.Contents(pWorkbookPath), null, true),
+    T = Source{[Item="Read_Me",Kind="Sheet"]}[Data],
+    H = Table.PromoteHeaders(T,[PromoteAllScalars=true])
+in H
+

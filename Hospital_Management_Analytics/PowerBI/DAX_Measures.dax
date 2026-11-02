@@ -1,0 +1,102 @@
+/* HOSPITAL MANAGEMENT & OPERATIONAL PERFORMANCE ANALYTICS
+   Create a calculated table for the calendar, then create measures.
+   Model naming assumed:
+   DimDate, DimPatients, DimDoctors, DimDepartments,
+   FactAppointments, FactAdmissions, FactBilling, FactBedInventory.
+*/
+
+DimDate =
+VAR MinDate = DATE(2020,1,1)
+VAR MaxDate = DATE(2026,12,31)
+RETURN
+ADDCOLUMNS(
+    CALENDAR(MinDate, MaxDate),
+    "Year", YEAR([Date]),
+    "Quarter", "Q" & FORMAT([Date], "Q"),
+    "Month Number", MONTH([Date]),
+    "Month", FORMAT([Date], "MMM"),
+    "Month Year", FORMAT([Date], "MMM yyyy"),
+    "Year Month Sort", YEAR([Date]) * 100 + MONTH([Date]),
+    "Weekday", FORMAT([Date], "ddd")
+)
+
+/* Mark DimDate[Date] as the Date table.
+   Sort Month by Month Number; Month Year by Year Month Sort. */
+
+Total Patients = DISTINCTCOUNT(DimPatients[Patient_ID])
+Total Doctors = DISTINCTCOUNT(DimDoctors[Doctor_ID])
+Total Appointments = DISTINCTCOUNT(FactAppointments[Appointment_ID])
+Total Admissions = DISTINCTCOUNT(FactAdmissions[Admission_ID])
+
+Completed Appointments =
+CALCULATE([Total Appointments], FactAppointments[Appointment_Status] = "Completed")
+
+Appointment Completion % =
+DIVIDE([Completed Appointments], [Total Appointments], 0)
+
+Total Billed Amount = SUM(FactBilling[Total_Amount])
+Amount Collected = SUM(FactBilling[Amount_Paid])
+Outstanding Amount = SUM(FactBilling[Outstanding_Amount])
+Collection % = DIVIDE([Amount Collected], [Total Billed Amount], 0)
+
+Occupied Beds =
+CALCULATE(COUNTROWS(FactBedInventory), FactBedInventory[Bed_Status] = "Occupied")
+
+Total Beds = COUNTROWS(FactBedInventory)
+Available Beds =
+CALCULATE(COUNTROWS(FactBedInventory), FactBedInventory[Bed_Status] = "Available")
+
+Bed Occupancy Rate = DIVIDE([Occupied Beds], [Total Beds], 0)
+
+Average Patient Age = AVERAGE(DimPatients[Age])
+Male Patients =
+CALCULATE([Total Patients], DimPatients[Gender] = "Male")
+Female Patients =
+CALCULATE([Total Patients], DimPatients[Gender] = "Female")
+
+Average Waiting Time (Completed) =
+CALCULATE(
+    AVERAGE(FactAppointments[Waiting_Time_Minutes]),
+    FactAppointments[Appointment_Status] = "Completed"
+)
+
+Average Appointments per Doctor =
+DIVIDE([Total Appointments], [Total Doctors], 0)
+
+Average Length of Stay (Discharged) =
+CALCULATE(
+    AVERAGE(FactAdmissions[Length_of_Stay_Days]),
+    FactAdmissions[Admission_Status] = "Discharged"
+)
+
+Patients with Multiple Admissions =
+VAR PatientAdmissionCounts =
+    SUMMARIZE(
+        FactAdmissions,
+        FactAdmissions[Patient_ID],
+        "AdmissionCount", DISTINCTCOUNT(FactAdmissions[Admission_ID])
+    )
+RETURN
+COUNTROWS(FILTER(PatientAdmissionCounts, [AdmissionCount] > 1))
+
+Readmission Patient % =
+DIVIDE([Patients with Multiple Admissions],
+       DISTINCTCOUNT(FactAdmissions[Patient_ID]), 0)
+
+/* Age bands - optional calculated column in DimPatients */
+Age Group =
+SWITCH(
+    TRUE(),
+    DimPatients[Age] < 18, "0–17",
+    DimPatients[Age] < 30, "18–29",
+    DimPatients[Age] < 45, "30–44",
+    DimPatients[Age] < 60, "45–59",
+    "60+"
+)
+
+/* Note: Total Patients is the distinct patient population in the current
+   filter context, not necessarily patients with an encounter in that period.
+   For encounter-based patient counts, use DISTINCTCOUNT on the Patient_ID
+   in the relevant fact table. Readmission is a repeat-admission indicator
+   within the current filter context; it is not a clinical 30-day readmission
+   measure because the dataset does not provide a validated 30-day definition. */

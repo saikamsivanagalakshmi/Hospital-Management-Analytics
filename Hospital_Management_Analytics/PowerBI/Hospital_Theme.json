@@ -1,0 +1,53 @@
+{
+  "name": "Hospital Green Healthcare",
+  "dataColors": [
+    "#166534",
+    "#15803D",
+    "#22C55E",
+    "#86EFAC",
+    "#0F766E",
+    "#F59E0B",
+    "#DC2626",
+    "#64748B"
+  ],
+  "background": "#F0FDF4",
+  "foreground": "#14532D",
+  "tableAccent": "#15803D",
+  "visualStyles": {
+    "*": {
+      "*": {
+        "title": [
+          {
+            "color": {
+              "solid": {
+                "color": "#14532D"
+              }
+            },
+            "fontFamily": "Segoe UI",
+            "fontSize": 12
+          }
+        ],
+        "background": [
+          {
+            "color": {
+              "solid": {
+                "color": "#FFFFFF"
+              }
+            },
+            "transparency": 0
+          }
+        ],
+        "border": [
+          {
+            "show": true,
+            "color": {
+              "solid": {
+                "color": "#BBF7D0"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

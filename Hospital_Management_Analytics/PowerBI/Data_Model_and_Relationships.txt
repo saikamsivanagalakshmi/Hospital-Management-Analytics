@@ -1,0 +1,44 @@
+RECOMMENDED MODEL (single-direction, one-to-many)
+
+Dimension tables:
+- DimDate: one row per calendar date (2020-01-01 through 2026-12-31).
+- DimPatients: one row per Patient_ID.
+- DimDoctors: one row per Doctor_ID.
+- DimDepartments: one row per Department_ID.
+
+Fact tables:
+- FactAppointments: one row per Appointment_ID.
+- FactAdmissions: one row per Admission_ID.
+- FactBilling: one row per Bill_ID.
+- FactBedInventory: one row per Bed_ID (current/static inventory snapshot).
+
+Relationships (dimension side 1 -> fact side *; single filter direction):
+DimPatients[Patient_ID] -> FactAppointments[Patient_ID]
+DimPatients[Patient_ID] -> FactAdmissions[Patient_ID]
+DimPatients[Patient_ID] -> FactBilling[Patient_ID]
+DimDoctors[Doctor_ID] -> FactAppointments[Doctor_ID]
+DimDoctors[Doctor_ID] -> FactAdmissions[Doctor_ID]
+DimDepartments[Department_ID] -> FactAppointments[Department_ID]
+DimDepartments[Department_ID] -> FactAdmissions[Department_ID]
+DimDepartments[Department_ID] -> FactBilling[Department_ID]
+DimDepartments[Department_ID] -> FactBedInventory[Department_ID]
+DimDate[Date] -> FactAppointments[Appointment_Date]
+DimDate[Date] -> FactAdmissions[Admission_Date]
+DimDate[Date] -> FactBilling[Bill_Date]
+
+Do not create a relationship from DimDepartments to DimDoctors while also
+relating both dimensions to FactAppointments/FactAdmissions: that can create
+ambiguous filter paths. Keep Department_ID in DimDoctors as a descriptive
+attribute, or create a dedicated doctor-department bridge only if a future
+many-to-many history is required.
+
+Date roles:
+The active admission date relationship supports admission trend reporting.
+Discharge_Date is a secondary date role; if needed, create an inactive
+relationship and use USERELATIONSHIP in dedicated discharge measures.
+Bed inventory is a point-in-time snapshot and should not be connected to
+DimDate unless dated inventory snapshots are added.
+
+Star-schema note:
+These are multiple fact tables sharing conformed dimensions. Avoid joining
+fact tables directly. Do not sum patient counts across fact tables.

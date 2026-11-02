@@ -1,0 +1,53 @@
+Sheet,Column,Inferred dtype,Example
+Departments,Department_ID,object,D01
+Departments,Department_Name,object,Cardiology
+Departments,Department_Type,object,Inpatient
+Departments,Bed_Capacity,int64,40
+Doctors,Doctor_ID,object,DR001
+Doctors,Doctor_Name,object,Dr. Aarav Patel
+Doctors,Department_ID,object,D01
+Doctors,Specialty,object,Cardiology
+Doctors,Experience_Years,int64,18
+Doctors,Consultation_Fee,float64,1065.67
+Patients,Patient_ID,object,P0001
+Patients,Patient_Name,object,Ira Nair
+Patients,Age,int64,37
+Patients,Gender,object,Female
+Patients,City,object,Guntur
+Patients,Patient_Category,object,Silver
+Patients,Registration_Date,datetime64[ns],2021-01-02 00:00:00
+Appointments,Appointment_ID,object,APT00001
+Appointments,Patient_ID,object,P0230
+Appointments,Doctor_ID,object,DR017
+Appointments,Department_ID,object,D01
+Appointments,Appointment_Date,datetime64[ns],2026-09-12 00:00:00
+Appointments,Appointment_Time,object,10:20
+Appointments,Waiting_Time_Minutes,int64,46
+Appointments,Appointment_Status,object,Completed
+Appointments,Consultation_Charge,float64,915.25
+Appointments,Booking_Channel,object,Walk-in
+Admissions,Admission_ID,object,ADM00001
+Admissions,Patient_ID,object,P0478
+Admissions,Doctor_ID,object,DR024
+Admissions,Department_ID,object,D08
+Admissions,Admission_Date,datetime64[ns],2024-02-23 00:00:00
+Admissions,Discharge_Date,datetime64[ns],2024-02-24 00:00:00
+Admissions,Length_of_Stay_Days,int64,1
+Admissions,Admission_Status,object,Discharged
+Admissions,Ward_Type,object,Semi-Private
+Admissions,Admission_Type,object,Emergency
+Billing,Bill_ID,object,BILL00001
+Billing,Patient_ID,object,P0276
+Billing,Department_ID,object,D05
+Billing,Bill_Date,datetime64[ns],2026-06-30 00:00:00
+Billing,Service_Category,object,Medication
+Billing,Total_Amount,float64,62419.29
+Billing,Amount_Paid,float64,15755.73
+Billing,Outstanding_Amount,float64,46663.56
+Billing,Payment_Method,object,UPI
+Billing,Payment_Status,object,Paid
+Bed_Inventory,Bed_ID,object,D01-BED001
+Bed_Inventory,Department_ID,object,D01
+Bed_Inventory,Bed_Status,object,Occupied
+Bed_Inventory,Bed_Type,object,General Ward
+Read_Me,Dataset_Notes,object,Synthetic realistic-looking training data; no real patient records.
